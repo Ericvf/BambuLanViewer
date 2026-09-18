@@ -28,9 +28,9 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
         _configuration = configuration;
 
         var bambuSection = _configuration.GetSection("BambuMttqClient");
-        printerIp = bambuSection["IPAddress"] ?? "192.168.1.121";
-        accessCode = bambuSection["AccessCode"] ?? "";
-        serialNumber = bambuSection["SerialNumber"] ?? "";
+        printerIp = bambuSection["IPAddress"] ?? throw new ArgumentException("Printer IP address is not configured");
+        accessCode = bambuSection["AccessCode"] ?? throw new ArgumentException("Access code is not configured");
+        serialNumber = bambuSection["SerialNumber"] ?? throw new ArgumentException("Serial number is not configured");
 
         var mqttFactory = new MqttClientFactory();
         _mqttClient = mqttFactory.CreateMqttClient();

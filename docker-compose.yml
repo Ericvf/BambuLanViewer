@@ -1,7 +1,7 @@
 services:
-  foodtrax:
+  bambulanviewer:
     build: .
-    # image: localhost:5000/foodtrax:latest
+    # image: localhost:5000/bambulanviewer:latest
     container_name: BambuLanViewer
     restart: unless-stopped
     networks:
