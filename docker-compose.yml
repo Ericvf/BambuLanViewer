@@ -1,16 +1,16 @@
 services:
   bambulanviewer:
     build: .
-    # image: localhost:5000/bambulanviewer:latest
     container_name: BambuLanViewer
     restart: unless-stopped
     networks:
       - virtual-network
-    labels:
-      dmz.url: http://bambulanviewer.docker.local/
     ports:
       - "8080:8080"
-
+    environment:
+      - BambuMttqClient__IPAddress=192.168.1.*
+      - BambuMttqClient__AccessCode=****
+      - BambuMttqClient__SerialNumber=****
 networks:
   virtual-network:
     external: true
