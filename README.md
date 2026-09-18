@@ -17,7 +17,7 @@ To add screenshots:
 -->
 
 <div align="center">
-  <img src="screen3.png" alt="Desktop View" width="800"/>
+  <img src="screen3.jpg" alt="Desktop View" width="800"/>
   <p><em>Real-time print progress display with circular progress ring</em></p>
 </div>
 
