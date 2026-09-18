@@ -17,12 +17,12 @@ To add screenshots:
 -->
 
 <div align="center">
-  <img src="images/screenshot-desktop.png" alt="Desktop View" width="800"/>
+  <img src="screen3.png" alt="Desktop View" width="800"/>
   <p><em>Real-time print progress display with circular progress ring</em></p>
 </div>
 
 <div align="center">
-  <img src="images/screenshot-mobile.png" alt="Mobile View" width="300"/>
+  <img src="screen2.png" alt="Mobile View" width="300"/>
   <p><em>Responsive design works great on mobile devices and Apple Watch</em></p>
 </div>
 
