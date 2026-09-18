@@ -3,32 +3,41 @@
 @using MQTTnet
 
 @inject IBambuMttqClient BambuMttqClient
-
+@inject IJSRuntime JS
 <PageTitle>BambuLanViewer</PageTitle>
-    @if (BambuMttqClient.IsConnected && PrinterData != null)
-    {
-        <div class="progress-layout">
-            <div class="progress-wrapper">
-                <div class="radial-progress" style="--value: @PrinterData.PrintPercentage;" role="progressbar" aria-valuenow="@PrinterData.PrintPercentage" aria-valuemin="0" aria-valuemax="100">
-                </div>
+
+@if (BambuMttqClient.IsConnected && PrinterData != null)
+{
+    <div class="progress-layout">
+        <div class="progress-wrapper">
+            <div class="radial-progress" style="--value: @PrinterData.PrintPercentage;" role="progressbar" aria-valuenow="@PrinterData.PrintPercentage" aria-valuemin="0" aria-valuemax="100">
+            </div>
 
             <div class="position-box top">@PrinterData.PrintPercentage%</div>
             <div class="position-box left">@PrinterData.NozzleTemp °C</div>
             <div class="position-box center">Layer: @PrinterData.PrintLayer / @PrinterData.TotalLayers</div>
             <div class="position-box right">@PrinterData.BedTemp °C</div>
             <div class="position-box bottom">⏱️@PrinterData.RemainingMinutes min</div>
-            <div class="position-box title">@PrinterData.PrintObjectName</div>
+            <div class="position-box title">@PrinterData.PrintObjectName </div>
             <div class="position-box status">@PrinterData.PrintStatus</div>
-            </div>
         </div>
-    }
-    else if (BambuMttqClient.IsConnected)
-    {
-        <p class="alert alert-info">Waiting for printer data...</p>
-    }
+    </div>
+}
+else if (BambuMttqClient.IsConnected)
+{
+    <p class="alert alert-info">Waiting for printer data...</p>
+}
 
 @code {
     private PrinterDataModel? PrinterData { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("scaleProgress");
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,12 +69,13 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private void OnMessageReceived(object? sender, Services.PrinterDataModel e)
+    private async void OnMessageReceived(object? sender, Services.PrinterDataModel e)
     {
         try
         {
             PrinterData = e;
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(() => JS.InvokeVoidAsync("scaleProgress"));
         }
         catch (Exception ex)
         {

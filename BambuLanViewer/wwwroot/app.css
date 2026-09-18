@@ -38,31 +38,31 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
-
-/* Bambulanview - Viewport-based scaling */
 .progress-layout {
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: clamp(1rem, 5vmin, 2rem);
+    overflow: hidden;
 }
 
 .progress-wrapper {
     position: relative;
-    width: clamp(200px, 90vmin, 90vh);
-    height: clamp(200px, 90vmin, 90vh);
-    aspect-ratio: 1 / 1;
-    font-size: clamp(12px, 2vmin, 16px);
+    width: 500px;
+    height: 500px;
+    flex: 0 0 500px;
+    font-size: 16px;
     background-image: url(bambu-lab.png);
     background-position: center;
-    background-size: clamp(40px, 25vmin, 150px);
+    background-size: 125px;
     background-repeat: no-repeat;
+    transform-origin: center center;
 }
 
 .radial-progress {
     --size: 100%;
-    --thickness: clamp(12px, 3vmin, 40px);
+    --thickness: 16px;
     --progress-color: #00AE42;
     --track-color: var(--pico-muted-border, #e0e0e0);
     position: absolute;
@@ -74,18 +74,15 @@ h1:focus {
     display: grid;
     place-content: center;
     font-weight: bold;
-    background: conic-gradient(var(--progress-color) calc(var(--value) * 1%), var(--track-color) 0);
-    mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), #000 calc(100% - var(--thickness) + 1px));
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), #000 calc(100% - var(--thickness) + 1px));
+    background: conic-gradient( var(--progress-color) calc(var(--value) * 1%), var(--track-color) 0 );
+    mask: radial-gradient( farthest-side, transparent calc(100% - var(--thickness)), #000 calc(100% - var(--thickness) + 1px) );
+    -webkit-mask: radial-gradient( farthest-side, transparent calc(100% - var(--thickness)), #000 calc(100% - var(--thickness) + 1px) );
 }
 
 .position-box {
     position: absolute;
-  /*  background-color: var(--pico-card-background-color, #fff);
-    border: 1px solid var(--pico-muted-border, #e0e0e0);
-    border-radius: clamp(2px, 0.5vmin, 4px);*/
-    padding: clamp(0.375rem, 1vmin, 0.75rem) clamp(0.75rem, 2vmin, 1.25rem);
-    font-size: clamp(30px, 3vmin, 40px);
+    padding: 8px 16px;
+    font-size: 30px;
     font-weight: 500;
     text-align: center;
     white-space: nowrap;
@@ -97,6 +94,7 @@ h1:focus {
         left: 50%;
         transform: translateX(-50%);
         color: #00AE42;
+        font-size:3rem;
     }
 
     .position-box.bottom {
@@ -109,13 +107,37 @@ h1:focus {
         left: 5%;
         top: 50%;
         transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        padding:0;
     }
+        .position-box.left::before {
+            content: '';
+            background: url('/nozzle.png') center / contain no-repeat;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            margin-right: 0px;
+        }
 
     .position-box.right {
         right: 5%;
         top: 50%;
         transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        padding: 0;
     }
+
+        .position-box.right::before {
+            content: '';
+            background: url('/bed.png') center / contain no-repeat;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            margin-left: 10px;
+            order: 2;
+        }
 
     .position-box.center {
         top: 70%;
@@ -124,17 +146,21 @@ h1:focus {
     }
 
     .position-box.status {
-        top: 20%;
+        top: 30%;
         left: 50%;
-        transform: translate(-50%, 70%);
+        transform: translate(-50%, -50%);
         color: #00AE42;
     }
 
     .position-box.title {
-        top: 40%;
+        top: 75%;
         left: 50%;
-        transform: translate(-50%, 450%);
-        font-size: clamp(15px, 1.5vmin, 20px);
+        transform: translate(-50%, 0%);
+        width: 100%;
+        max-width: 65%;
+        font-size: 15px;
         white-space: normal;
         overflow-wrap: break-word;
+        padding:0;
+        font-size: 1rem;
     }
