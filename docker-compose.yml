@@ -2,16 +2,14 @@ services:
   foodtrax:
     build: .
     # image: localhost:5000/foodtrax:latest
-    container_name: Foodtrax
+    container_name: BambuLanViewer
     restart: unless-stopped
     networks:
       - virtual-network
     labels:
-      dmz.url: http://foodtrax.docker.local/
+      dmz.url: http://bambulanviewer.docker.local/
     ports:
       - "8080:8080"
-    volumes:
-      - ./data:/app/data
 
 networks:
   virtual-network:
