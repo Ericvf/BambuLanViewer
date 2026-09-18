@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .AddEnvironmentVariables();
 
-// Register MQTT service
 builder.Services.AddSingleton<IBambuMttqClient, BambuMttqClient>();
 
 builder.Services.AddRazorComponents()
