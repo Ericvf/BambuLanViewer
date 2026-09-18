@@ -4,25 +4,7 @@
 
 @inject IBambuMttqClient BambuMttqClient
 
-<PageTitle>Bambu Lab Printer Monitor</PageTitle>
-
-    @* <h1>BambuLanView</h1> *@
-
-@*     <div class="status-section">
-        <h3>Connection Status</h3>
-        <p>
-            Status:
-            @if (BambuMttqClient.IsConnected)
-            {
-                <span class="badge bg-success">Connected</span>
-            }
-            else
-            {
-                <span class="badge bg-danger">Disconnected</span>
-            }
-        </p>
-    </div>
- *@
+<PageTitle>BambuLanViewer</PageTitle>
     @if (BambuMttqClient.IsConnected && PrinterData != null)
     {
         <div class="progress-layout">
@@ -35,44 +17,10 @@
             <div class="position-box center">Layer: @PrinterData.PrintLayer / @PrinterData.TotalLayers</div>
             <div class="position-box right">@PrinterData.BedTemp °C</div>
             <div class="position-box bottom">⏱️@PrinterData.RemainingMinutes min</div>
-            <div class="position-box title">@PrinterData.PrintObjectName @PrinterData.PrintObjectName</div>
+            <div class="position-box title">@PrinterData.PrintObjectName</div>
             <div class="position-box status">@PrinterData.PrintStatus</div>
             </div>
         </div>
-@* 
-        <div class="printer-info">
-            <h3>Printer Information</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Print Progress:</label>
-                    <span>@PrinterData.PrintPercentage%</span>
-                </div>
-                <div class="info-item">
-                    <label>Layer:</label>
-                    <span>@PrinterData.PrintLayer / @PrinterData.TotalLayers</span>
-                </div>
-                <div class="info-item">
-                    <label>Nozzle Temp:</label>
-                    <span>@PrinterData.NozzleTemp°C</span>
-                </div>
-                <div class="info-item">
-                    <label>Bed Temp:</label>
-                    <span>@PrinterData.BedTemp°C</span>
-                </div>
-                <div class="info-item">
-                    <label>ETA:</label>
-                    <span>@PrinterData.RemainingMinutes minutes</span>
-                </div>
-                <div class="info-item">
-                    <label>Object Name:</label>
-                    <span>@PrinterData.PrintObjectName</span>
-                </div>
-                <div class="info-item">
-                    <label>Print Status:</label>
-                    <span>@PrinterData.PrintStatus</span>
-                </div>
-            </div>
-        </div> *@
     }
     else if (BambuMttqClient.IsConnected)
     {
@@ -81,14 +29,9 @@
 
 @code {
     private PrinterDataModel? PrinterData { get; set; }
-    private SynchronizationContext? _syncContext;
 
     protected override async Task OnInitializedAsync()
     {
-        // Capture the UI synchronization context so we can marshal calls back to it
-        _syncContext = SynchronizationContext.Current;
-
-        // Subscribe to MQTT events
         BambuMttqClient.Connected += OnMqttConnected;
         BambuMttqClient.Disconnected += OnMqttDisconnected;
         BambuMttqClient.MessageReceived += OnMessageReceived;
@@ -108,40 +51,19 @@
 
     private void OnMqttConnected(object? sender, MqttClientConnectedEventArgs e)
     {
-        Console.WriteLine("Connected to MQTT broker");
-
-        // Marshal back to UI thread
-        if (_syncContext != null)
-        {
-            _syncContext.Post(_ => StateHasChanged(), null);
-        }
-        else
-        {
-            StateHasChanged();
-        }
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnMqttDisconnected(object? sender, MqttClientDisconnectedEventArgs e)
     {
-        Console.WriteLine("Disconnected from MQTT broker");
         PrinterData = null;
-
-        // Marshal back to UI thread
-        if (_syncContext != null)
-        {
-            _syncContext.Post(_ => StateHasChanged(), null);
-        }
-        else
-        {
-            StateHasChanged();
-        }
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnMessageReceived(object? sender, Services.PrinterDataModel e)
     {
         try
         {
-            Console.WriteLine($"Printer data updated: {e.PrintPercentage}%");
             PrinterData = e;
             InvokeAsync(StateHasChanged);
         }
@@ -153,7 +75,6 @@
 
     public void Dispose()
     {
-        // Unsubscribe from events to prevent memory leaks
         BambuMttqClient.Connected -= OnMqttConnected;
         BambuMttqClient.Disconnected -= OnMqttDisconnected;
         BambuMttqClient.MessageReceived -= OnMessageReceived;
