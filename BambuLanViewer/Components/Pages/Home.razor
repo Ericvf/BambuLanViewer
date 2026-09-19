@@ -5,6 +5,7 @@
 @inject IBambuMttqClient BambuMttqClient
 @inject IConfiguration Configuration
 @inject IJSRuntime JS
+@inject NavigationManager Navigator
 
 <PageTitle>BambuLanViewer</PageTitle>
 
@@ -24,10 +25,9 @@
             <div class="position-box status">@PrinterData.PrintStatus</div>
         </div>
     </div>
-    <img src="/preview?t=initial" />
-    <dialog id="my-dialog" @onclick="CloseDialog">
+ @*    <dialog id="my-dialog" @onclick="CloseDialog">
         <img src="@imageUrl" />
-    </dialog>
+    </dialog> *@
 }
 else if (!BambuMttqClient.IsConnected)
 {
@@ -56,14 +56,16 @@ else if (!BambuMttqClient.IsConnected)
 
     private async Task ShowDialog()
     {
-        if (baseUrl != null)
-        {
-            imageUrl = $"/preview?t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+        Navigator.NavigateTo("/previewpage", true);
 
-            await JS.InvokeVoidAsync(
-                "dialog.open",
-                "my-dialog");
-        }
+        // if (baseUrl != null)
+        // {
+        //     imageUrl = $"/preview?t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+
+        //     await JS.InvokeVoidAsync(
+        //         "dialog.open",
+        //         "my-dialog");
+        // }
     }
 
     private async Task CloseDialog()
