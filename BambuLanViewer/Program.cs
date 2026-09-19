@@ -17,6 +17,17 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
+
+app.MapGet("/preview", async (HttpContext context) =>
+{
+    HttpClient _http = new();
+
+    var url = builder.Configuration.GetSection("BambuMttqClient").GetValue<string>("CameraUrl");
+    var bytes = await _http.GetByteArrayAsync(url);
+
+    return Results.File(bytes, "image/jpeg");
+});
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseAntiforgery();
 

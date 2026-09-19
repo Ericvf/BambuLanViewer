@@ -58,7 +58,7 @@ else if (!BambuMttqClient.IsConnected)
     {
         if (baseUrl != null)
         {
-            imageUrl = $"{baseUrl}&t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+            imageUrl = $"/preview?t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
 
             await JS.InvokeVoidAsync(
                 "dialog.open",
