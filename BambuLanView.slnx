@@ -3,6 +3,7 @@
     <File Path=".gitignore" />
     <File Path="docker-compose.yml" />
     <File Path="dockerfile" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="BambuLanViewer/BambuLanViewer.csproj" />
 </Solution>

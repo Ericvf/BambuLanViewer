@@ -8,14 +8,6 @@ A real-time 3D printer monitoring dashboard for Bambu Lab printers, built with B
 
 ## 📸 Screenshots
 
-<!-- Add your screenshots here -->
-<!-- 
-To add screenshots:
-1. Take a screenshot of the application running
-2. Save it to an `images/` folder in this repository
-3. Update the image paths below
--->
-
 <div align="center">
   <img src="screen3.jpg" alt="Desktop View" width="800"/>
   <p><em>Real-time print progress display with circular progress ring</em></p>
