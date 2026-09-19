@@ -111,7 +111,7 @@ Once running, open your browser and navigate to:
 http://localhost:8080
 ```
 
-## 🍎 Apple Watch Support
+## Apple Watch Support
 
 BambuLanViewer is optimized for small screens including the Apple Watch! The responsive design automatically scales the progress ring and information to fit any display size.
 
@@ -201,14 +201,5 @@ The application will start on `https://localhost:5001` (or similar).
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- [Bambu Lab](https://bambulab.com/) for making their printers accessible via MQTT
-- [.NET Foundation](https://dotnetfoundation.org/) for the amazing Blazor framework
-- [Pico CSS](https://picocss.com/) for the lightweight styling framework
-
----
-
-**Made with ❤️ for 3D printing enthusiasts**
