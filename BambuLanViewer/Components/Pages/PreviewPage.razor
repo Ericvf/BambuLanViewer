@@ -1,14 +1,42 @@
 @page "/previewpage"
 @inject NavigationManager Navigator
+@implements IAsyncDisposable
 
 <div class="preview-container">
-    <img src="/preview" @onclick="NavigateBack" />
+    <img src="/preview?t=initial" @onclick="NavigateBack" />
 </div>
 
 @code {
-    private async Task NavigateBack()
+    private PeriodicTimer? _timer;
+    private CancellationTokenSource _cts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
+
+        try
+        {
+            while (await _timer.WaitForNextTickAsync(_cts.Token))
+            {
+                Navigator.NavigateTo(Navigator.Uri, true);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private void NavigateBack()
     {
         Navigator.NavigateTo("/", true);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _cts.Cancel();
+        _timer?.Dispose();
+        _cts.Dispose();
+        return ValueTask.CompletedTask;
     }
 }
 
