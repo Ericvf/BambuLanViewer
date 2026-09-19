@@ -205,3 +205,19 @@ h1:focus {
         font-size: 1rem;
         line-height: 1rem;
     }
+
+/* Preview page*/
+.preview-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+    .preview-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        cursor: pointer;
+    }

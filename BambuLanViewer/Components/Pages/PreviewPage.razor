@@ -1,4 +1,5 @@
 @page "/previewpage"
+@implements IAsyncDisposable
 @inject NavigationManager Navigator
 
 <div class="preview-container">
@@ -6,49 +7,44 @@
 </div>
 
 @code {
-    private string ImageUrl => $"/preview?t={_timestamp}";
+    private string ImageUrl => $"/preview?t={timestamp}";
 
-    private long _timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    private long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-    protected override void OnAfterRender(bool firstRender)
+    private readonly CancellationTokenSource cancellationToken = new();
+
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            _ = RefreshImageAsync();
-        }
+        _ = RefreshImageAsync(cancellationToken.Token);
     }
 
-    private async Task RefreshImageAsync()
+    private async Task RefreshImageAsync(CancellationToken cancellationToken)
     {
-        while(true)
+        try
         {
-            _timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            StateHasChanged();
-            await Task.Delay(3000);
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                await InvokeAsync(StateHasChanged);
+
+                await Task.Delay(3000, cancellationToken);
+            }
         }
-        // await Task.Delay(3000);
-        // Navigator.NavigateTo(Navigator.Uri, true);
+        catch (OperationCanceledException)
+        {
+            // Expected when the component is disposed.
+        }
     }
 
     private void NavigateBack()
     {
         Navigator.NavigateTo("/", true);
     }
-}
-            
-<style>
-    .preview-container {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-    }
 
-        .preview-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            cursor: pointer;
-        }
-</style>
+    public async ValueTask DisposeAsync()
+    {
+        await cancellationToken.CancelAsync();
+        cancellationToken.Dispose();
+    }
+}
