@@ -13,5 +13,23 @@ function scaleProgress() {
     wrapper.style.transform = `scale(${scale})`;
 }
 
+window.dialog = {
+    open: function (id) {
+        const dialog = document.getElementById(id);
+
+        if (dialog) {
+            dialog.showModal();
+        }
+    },
+
+    close: function (id) {
+        const dialog = document.getElementById(id);
+
+        if (dialog) {
+            dialog.close();
+        }
+    }
+};
+
 window.addEventListener('resize', scaleProgress);
 window.addEventListener('load', scaleProgress);
