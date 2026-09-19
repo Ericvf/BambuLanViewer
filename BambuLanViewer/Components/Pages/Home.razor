@@ -25,9 +25,6 @@
             <div class="position-box status">@PrinterData.PrintStatus</div>
         </div>
     </div>
- @*    <dialog id="my-dialog" @onclick="CloseDialog">
-        <img src="@imageUrl" />
-    </dialog> *@
 }
 else if (!BambuMttqClient.IsConnected)
 {
@@ -51,28 +48,11 @@ else if (!BambuMttqClient.IsConnected)
         BambuMttqClient.Connected += OnMqttConnected;
         BambuMttqClient.Disconnected += OnMqttDisconnected;
         BambuMttqClient.MessageReceived += OnMessageReceived;
-
     }
 
     private async Task ShowDialog()
     {
         Navigator.NavigateTo("/previewpage", true);
-
-        // if (baseUrl != null)
-        // {
-        //     imageUrl = $"/preview?t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
-
-        //     await JS.InvokeVoidAsync(
-        //         "dialog.open",
-        //         "my-dialog");
-        // }
-    }
-
-    private async Task CloseDialog()
-    {
-        await JS.InvokeVoidAsync(
-            "dialog.close",
-            "my-dialog");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
