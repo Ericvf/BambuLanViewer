@@ -18,10 +18,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
-app.MapGet("/preview", async (HttpContext context) =>
+app.MapGet("/preview", async (HttpContext context, ILogger<Program> logger) =>
 {
     HttpClient _http = new();
 
+    logger.LogInformation("Fetching preview image from Bambu printer...");
     var url = builder.Configuration.GetSection("BambuMttqClient").GetValue<string>("CameraUrl");
     var bytes = await _http.GetByteArrayAsync(url);
 
