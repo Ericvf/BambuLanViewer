@@ -23,21 +23,17 @@
         </div>
     </div>
 }
-else if (BambuMttqClient.IsConnected)
+else if (!BambuMttqClient.IsConnected)
 {
-    <p class="alert alert-info">Waiting for printer data...</p>
+    <div class="loader-layout">
+        <div><span class="loader"></span></div>
+        <div>@message</div>
+    </div>
 }
 
 @code {
     private PrinterDataModel? PrinterData { get; set; }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("scaleProgress");
-        }
-    }
+    private string message = "Waiting for printer data...";
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,18 +41,30 @@ else if (BambuMttqClient.IsConnected)
         BambuMttqClient.Disconnected += OnMqttDisconnected;
         BambuMttqClient.MessageReceived += OnMessageReceived;
 
-        if (!BambuMttqClient.IsConnected)
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            try
+            await JS.InvokeVoidAsync("scaleProgress");
+
+            while (!BambuMttqClient.IsConnected)
             {
-                await BambuMttqClient.ConnectAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Connection error: {ex.Message}");
+                try
+                {
+                    await BambuMttqClient.ConnectAsync();
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(TimeSpan.FromSeconds(5));
+                }
             }
         }
     }
+
 
     private void OnMqttConnected(object? sender, MqttClientConnectedEventArgs e)
     {
@@ -79,7 +87,7 @@ else if (BambuMttqClient.IsConnected)
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error processing message: {ex.Message}");
+            message = $"{ex.Message}";
         }
     }
 

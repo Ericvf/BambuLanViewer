@@ -38,6 +38,45 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* Loader */
+
+.loader-layout {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.loader {
+    --color-1: #00AE42;
+    --size: 4px;
+    width: calc(48 * var(--size));
+    height: calc(48 * var(--size));
+    border: calc(5 * var(--size)) solid var(--color-1);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+/* Layout */
 .progress-layout {
     width: 100vw;
     height: 100vh;
@@ -45,6 +84,7 @@ h1:focus {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    flex-direction: column;
 }
 
 .progress-wrapper {
@@ -62,7 +102,7 @@ h1:focus {
 
 .radial-progress {
     --size: 100%;
-    --thickness: 16px;
+    --thickness: 30px;
     --progress-color: #00AE42;
     --track-color: var(--pico-muted-border, #e0e0e0);
     position: absolute;
@@ -82,6 +122,7 @@ h1:focus {
 .position-box {
     position: absolute;
     padding: 8px 16px;
+
     font-size: 30px;
     font-weight: 500;
     text-align: center;
@@ -104,7 +145,7 @@ h1:focus {
     }
 
     .position-box.left {
-        left: 5%;
+        left: 7%;
         top: 50%;
         transform: translateY(-50%);
         display: flex;
@@ -121,7 +162,7 @@ h1:focus {
         }
 
     .position-box.right {
-        right: 5%;
+        right: 7%;
         top: 50%;
         transform: translateY(-50%);
         display: flex;
@@ -163,4 +204,5 @@ h1:focus {
         overflow-wrap: break-word;
         padding:0;
         font-size: 1rem;
+        line-height: 1rem;
     }
