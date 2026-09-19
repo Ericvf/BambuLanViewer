@@ -20,8 +20,14 @@
 
     private async Task RefreshImageAsync()
     {
-        await Task.Delay(3000);
-        Navigator.NavigateTo(Navigator.Uri, true);
+        while(true)
+        {
+            _timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            StateHasChanged();
+            await Task.Delay(3000);
+        }
+        // await Task.Delay(3000);
+        // Navigator.NavigateTo(Navigator.Uri, true);
     }
 
     private void NavigateBack()
@@ -29,7 +35,6 @@
         Navigator.NavigateTo("/", true);
     }
 }
-
             
 <style>
     .preview-container {
@@ -37,7 +42,7 @@
         height: 100vh;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
     }
 
         .preview-container img {
