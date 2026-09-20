@@ -1,12 +1,15 @@
 using BambuLanViewer.Components;
 using BambuLanViewer.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .AddEnvironmentVariables();
 
-builder.Services.AddSingleton<IBambuMttqClient, BambuMttqClient>();
+builder.Services
+    .AddSingleton<IBambuMttqClient, BambuMttqClient>()
+    .AddHttpClient();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -18,13 +21,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
-app.MapGet("/preview", async (HttpContext context, ILogger<Program> logger) =>
-{
-    HttpClient _http = new();
+var cameraUrl = builder.Configuration.GetSection("BambuMttqClient").GetValue<string>("CameraUrl");
 
+app.MapGet("/preview", async ([FromServices]HttpClient http, HttpContext context, ILogger<Program> logger) =>
+{
     logger.LogInformation("Fetching preview image from Bambu printer...");
-    var url = builder.Configuration.GetSection("BambuMttqClient").GetValue<string>("CameraUrl");
-    var bytes = await _http.GetByteArrayAsync($"{url}");
+
+    var bytes = await http.GetByteArrayAsync($"{cameraUrl}");
 
     return Results.File(bytes, "image/jpeg");
 });
