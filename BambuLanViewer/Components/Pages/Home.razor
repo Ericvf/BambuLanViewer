@@ -1,13 +1,16 @@
 @page "/"
+
 @using BambuLanViewer.Services
 @using MQTTnet
+
 @implements IAsyncDisposable
 
-@inject IBambuMttqClient BambuMttqClient
-@inject IConfiguration Configuration
-@inject IJSRuntime JS
-@inject NavigationManager Navigation
 @inject ILogger<Home> Logger
+@inject IConfiguration Configuration
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject IBambuMqttClient BambuMttqClient
+@inject BambuCircuitHandler CircuitHandler
 
 <PageTitle>BambuLanViewer</PageTitle>
 
@@ -61,23 +64,9 @@ else if (!BambuMttqClient.IsConnected)
         if (firstRender)
         {
             await JS.InvokeVoidAsync("scaleProgress");
-            while (!BambuMttqClient.IsConnected)
-            {
-                try
-                {
-                    await BambuMttqClient.ConnectAsync();
-                    Logger.LogInformation("Connected to MttqClient");
-                }
-                catch (Exception ex)
-                {
-                    message = ex.Message;
-                    await InvokeAsync(StateHasChanged);
-                    await Task.Delay(TimeSpan.FromSeconds(5));
-                }
-            }
+            await CircuitHandler.StartViewingAsync();
         }
     }
-
 
     private async void OnMqttConnected(object? sender, MqttClientConnectedEventArgs e)
     {
@@ -109,18 +98,7 @@ else if (!BambuMttqClient.IsConnected)
         BambuMttqClient.Connected -= OnMqttConnected;
         BambuMttqClient.Disconnected -= OnMqttDisconnected;
         BambuMttqClient.MessageReceived -= OnMessageReceived;
-
-        if (BambuMttqClient.IsConnected)
-        {
-            try
-            {
-                await BambuMttqClient.DisconnectAsync();
-                Logger.LogInformation("Disconnected from MttqClient");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error disconnecting MttqClient");
-            }
-        }
+        
+        CircuitHandler.StopViewing();
     }
 }

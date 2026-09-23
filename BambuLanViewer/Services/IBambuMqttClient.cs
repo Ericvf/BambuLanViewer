@@ -2,7 +2,7 @@ using MQTTnet;
 
 namespace BambuLanViewer.Services;
 
-public interface IBambuMttqClient
+public interface IBambuMqttClient
 {
     event EventHandler<MqttClientConnectedEventArgs>? Connected;
 

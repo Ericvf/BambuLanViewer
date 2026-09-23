@@ -13,7 +13,9 @@ builder.Logging.AddSimpleConsole(options =>
 });
 
 builder.Services
-    .AddScoped<IBambuMttqClient, BambuMttqClient>()
+    .AddSingleton<IBambuMqttClient, BambuMqttClient>()
+    .AddSingleton<BambuMqttManager>()
+    .AddScoped<BambuCircuitHandler>()
     .AddHttpClient();
 
 builder.Services.AddRazorComponents()

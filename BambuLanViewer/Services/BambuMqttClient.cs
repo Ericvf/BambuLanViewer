@@ -5,37 +5,37 @@ using System.Text.Json.Nodes;
 
 namespace BambuLanViewer.Services;
 
-public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
+public class BambuMqttClient : IBambuMqttClient, IAsyncDisposable
 {
     public event EventHandler<MqttClientConnectedEventArgs>? Connected;
     public event EventHandler<MqttClientDisconnectedEventArgs>? Disconnected;
     public event EventHandler<PrinterDataModel>? MessageReceived;
 
-    private readonly ILogger<BambuMttqClient> _logger;
-    private readonly IConfiguration _configuration;
-    private readonly IMqttClient _mqttClient;
-    private readonly MqttClientOptions _mqttClientOptions;
+    private readonly ILogger<BambuMqttClient> logger;
+    private readonly IConfiguration configuration;
+    private readonly IMqttClient mqttClient;
+    private readonly MqttClientOptions mqttClientOptions;
 
     private readonly string printerIp;
     private readonly string accessCode;
     private readonly string serialNumber;
 
-    public bool IsConnected => _mqttClient.IsConnected;
+    public bool IsConnected => mqttClient.IsConnected;
 
-    public BambuMttqClient(ILogger<BambuMttqClient> logger, IConfiguration configuration)
+    public BambuMqttClient(ILogger<BambuMqttClient> logger, IConfiguration configuration)
     {
-        _logger = logger;
-        _configuration = configuration;
+        this.logger = logger;
+        this.configuration = configuration;
 
-        var bambuSection = _configuration.GetSection("BambuMttqClient");
+        var bambuSection = this.configuration.GetSection("BambuMttqClient");
         printerIp = bambuSection["IPAddress"] ?? throw new ArgumentException("Printer IP address is not configured");
         accessCode = bambuSection["AccessCode"] ?? throw new ArgumentException("Access code is not configured");
         serialNumber = bambuSection["SerialNumber"] ?? throw new ArgumentException("Serial number is not configured");
 
         var mqttFactory = new MqttClientFactory();
-        _mqttClient = mqttFactory.CreateMqttClient();
+        mqttClient = mqttFactory.CreateMqttClient();
 
-        _mqttClientOptions = new MqttClientOptionsBuilder()
+        mqttClientOptions = new MqttClientOptionsBuilder()
             .WithTcpServer(printerIp, 8883)
             .WithCredentials("bblp", accessCode)
             .WithTlsOptions(o => o
@@ -46,9 +46,9 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
             .WithCleanSession()
             .Build();
 
-        _mqttClient.ConnectedAsync += OnConnectedAsync;
-        _mqttClient.DisconnectedAsync += OnDisconnectedAsync;
-        _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
+        mqttClient.ConnectedAsync += OnConnectedAsync;
+        mqttClient.DisconnectedAsync += OnDisconnectedAsync;
+        mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
     }
 
     public async Task ConnectAsync()
@@ -57,13 +57,13 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
         {
             if (!IsConnected)
             {
-                _logger.LogInformation("Connecting to MQTT broker at {PrinterIp}...", printerIp);
-                await _mqttClient.ConnectAsync(_mqttClientOptions);
+                logger.LogInformation("Connecting to MQTT broker at {PrinterIp}...", printerIp);
+                await mqttClient.ConnectAsync(mqttClientOptions);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error connecting to MQTT broker");
+            logger.LogError(ex, "Error connecting to MQTT broker");
             throw;
         }
     }
@@ -74,25 +74,25 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
         {
             if (IsConnected)
             {
-                _logger.LogInformation("Disconnecting from MQTT broker...");
-                await _mqttClient.DisconnectAsync();
+                logger.LogInformation("Disconnecting from MQTT broker...");
+                await mqttClient.DisconnectAsync();
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error disconnecting from MQTT broker");
+            logger.LogError(ex, "Error disconnecting from MQTT broker");
             throw;
         }
     }
 
     private async Task OnConnectedAsync(MqttClientConnectedEventArgs e)
     {
-        _logger.LogInformation("Successfully connected to MQTT broker");
+        logger.LogInformation("Successfully connected to MQTT broker");
 
         string topic = $"device/{serialNumber}/report";
         var topicFilter = new MqttTopicFilterBuilder().WithTopic(topic).Build();
-        await _mqttClient.SubscribeAsync(topicFilter);
-        _logger.LogInformation("Subscribed to topic: {Topic}", topic);
+        await mqttClient.SubscribeAsync(topicFilter);
+        logger.LogInformation("Subscribed to topic: {Topic}", topic);
 
         Connected?.Invoke(this, e);
     }
@@ -130,7 +130,7 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing received message");
+            logger.LogError(ex, "Error processing received message");
         }
 
         return Task.CompletedTask;
@@ -145,16 +145,15 @@ public class BambuMttqClient : IBambuMttqClient, IAsyncDisposable
                 await DisconnectAsync();
             }
 
-            _mqttClient.ConnectedAsync -= OnConnectedAsync;
-            _mqttClient.DisconnectedAsync -= OnDisconnectedAsync;
-            _mqttClient.ApplicationMessageReceivedAsync -= OnMessageReceivedAsync;
+            mqttClient.ConnectedAsync -= OnConnectedAsync;
+            mqttClient.DisconnectedAsync -= OnDisconnectedAsync;
+            mqttClient.ApplicationMessageReceivedAsync -= OnMessageReceivedAsync;
 
-            _mqttClient.Dispose();
+            mqttClient.Dispose();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error disposing MQTT service");
+            logger.LogError(ex, "Error disposing MQTT service");
         }
     }
-
 }
