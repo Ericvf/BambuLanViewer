@@ -9,12 +9,12 @@
 @inject IConfiguration Configuration
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
-@inject IBambuMqttClient BambuMttqClient
+@inject IBambuMqttClient BambuMqttClient
 @inject BambuCircuitHandler CircuitHandler
 
 <PageTitle>BambuLanViewer</PageTitle>
 
-@if (BambuMttqClient.IsConnected && PrinterData != null)
+@if (BambuMqttClient.IsConnected && PrinterData != null)
 {
     <div class="progress-layout" @onclick="ShowDialog">
         <div class="progress-wrapper">
@@ -31,7 +31,7 @@
         </div>
     </div>
 }
-else if (!BambuMttqClient.IsConnected)
+else if (!BambuMqttClient.IsConnected)
 {
     <div class="loader-layout">
         <div><span class="loader"></span></div>
@@ -47,11 +47,11 @@ else if (!BambuMttqClient.IsConnected)
 
     protected override async Task OnInitializedAsync()
     {
-        baseUrl = Configuration["BambuMttqClient:CameraUrl"];
+        baseUrl = Configuration["BambuMqttClient:CameraUrl"];
 
-        BambuMttqClient.Connected += OnMqttConnected;
-        BambuMttqClient.Disconnected += OnMqttDisconnected;
-        BambuMttqClient.MessageReceived += OnMessageReceived;
+        BambuMqttClient.Connected += OnMqttConnected;
+        BambuMqttClient.Disconnected += OnMqttDisconnected;
+        BambuMqttClient.MessageReceived += OnMessageReceived;
     }
 
     private async Task ShowDialog()
@@ -95,9 +95,9 @@ else if (!BambuMttqClient.IsConnected)
 
     public async ValueTask DisposeAsync()
     {
-        BambuMttqClient.Connected -= OnMqttConnected;
-        BambuMttqClient.Disconnected -= OnMqttDisconnected;
-        BambuMttqClient.MessageReceived -= OnMessageReceived;
+        BambuMqttClient.Connected -= OnMqttConnected;
+        BambuMqttClient.Disconnected -= OnMqttDisconnected;
+        BambuMqttClient.MessageReceived -= OnMessageReceived;
         
         CircuitHandler.StopViewing();
     }

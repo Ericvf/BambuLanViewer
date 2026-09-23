@@ -28,7 +28,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
-var cameraUrl = builder.Configuration.GetSection("BambuMttqClient").GetValue<string>("CameraUrl");
+var cameraUrl = builder.Configuration.GetSection("BambuMqttClient").GetValue<string>("CameraUrl");
 
 app.MapGet("/preview", async ([FromServices]HttpClient http, HttpContext context, ILogger<Program> logger) =>
 {

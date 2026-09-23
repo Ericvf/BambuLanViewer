@@ -8,9 +8,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - BambuMttqClient__IPAddress=192.168.1.*
-      - BambuMttqClient__AccessCode=****
-      - BambuMttqClient__SerialNumber=****
+      - BambuMqttClient__IPAddress=192.168.1.*
+      - BambuMqttClient__AccessCode=****
+      - BambuMqttClient__SerialNumber=****
 networks:
   virtual-network:
     external: true

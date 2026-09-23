@@ -27,7 +27,7 @@ public class BambuMqttClient : IBambuMqttClient, IAsyncDisposable
         this.logger = logger;
         this.configuration = configuration;
 
-        var bambuSection = this.configuration.GetSection("BambuMttqClient");
+        var bambuSection = this.configuration.GetSection("BambuMqttClient");
         printerIp = bambuSection["IPAddress"] ?? throw new ArgumentException("Printer IP address is not configured");
         accessCode = bambuSection["AccessCode"] ?? throw new ArgumentException("Access code is not configured");
         serialNumber = bambuSection["SerialNumber"] ?? throw new ArgumentException("Serial number is not configured");

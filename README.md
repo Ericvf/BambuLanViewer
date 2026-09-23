@@ -66,9 +66,9 @@ Create a `.env` file in the project root with your configuration:
 
 ```bash
 # .env file - DO NOT commit to version control
-BambuMttqClient__IPAddress=192.168.1.100
-BambuMttqClient__AccessCode=your_access_code_here
-BambuMttqClient__SerialNumber=your_serial_number_here
+BambuMqttClient__IPAddress=192.168.1.100
+BambuMqttClient__AccessCode=your_access_code_here
+BambuMqttClient__SerialNumber=your_serial_number_here
 ```
 
 Then run:
@@ -92,9 +92,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - BambuMttqClient__IPAddress=192.168.1.100
-      - BambuMttqClient__AccessCode=your_access_code_here
-      - BambuMttqClient__SerialNumber=your_serial_number_here
+      - BambuMqttClient__IPAddress=192.168.1.100
+      - BambuMqttClient__AccessCode=your_access_code_here
+      - BambuMqttClient__SerialNumber=your_serial_number_here
 
 networks:
   virtual-network:
@@ -154,7 +154,7 @@ git clone https://github.com/yourusername/BambuLanView.git
 cd BambuLanView
 
 # Configure your printer settings in appsettings.Development.json
-# Update the BambuMttqClient section with your printer details
+# Update the BambuMqttClient section with your printer details
 
 # Run the application
 dotnet run --project BambuLanViewer
@@ -168,9 +168,9 @@ The application will start on `https://localhost:5001` (or similar).
 
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
-| `BambuMttqClient__IPAddress` | ✅ | Your Bambu printer's local IP address | `192.168.1.100` |
-| `BambuMttqClient__AccessCode` | ✅ | Access code from Bambu Cloud app | `your_access_code_here` |
-| `BambuMttqClient__SerialNumber` | ✅ | Printer's serial number | `your_serial_number_here` |
+| `BambuMqttClient__IPAddress` | ✅ | Your Bambu printer's local IP address | `192.168.1.100` |
+| `BambuMqttClient__AccessCode` | ✅ | Access code from Bambu Cloud app | `your_access_code_here` |
+| `BambuMqttClient__SerialNumber` | ✅ | Printer's serial number | `your_serial_number_here` |
 
 > **Note:** Docker Compose uses double underscores (`__`) to represent nested configuration sections. These map to the JSON structure in `appsettings.json`.
 
@@ -178,7 +178,7 @@ The application will start on `https://localhost:5001` (or similar).
 
 ```json
 {
-  "BambuMttqClient": {
+  "BambuMqttClient": {
     "IPAddress": "192.168.1.100",
     "AccessCode": "your_access_code_here",
     "SerialNumber": "your_serial_number_here"
