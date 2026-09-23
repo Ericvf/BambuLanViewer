@@ -7,8 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .AddEnvironmentVariables();
 
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.SingleLine = true;
+});
+
 builder.Services
-    .AddSingleton<IBambuMttqClient, BambuMttqClient>()
+    .AddScoped<IBambuMttqClient, BambuMttqClient>()
     .AddHttpClient();
 
 builder.Services.AddRazorComponents()

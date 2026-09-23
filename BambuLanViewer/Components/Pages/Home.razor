@@ -1,11 +1,13 @@
 @page "/"
 @using BambuLanViewer.Services
 @using MQTTnet
+@implements IAsyncDisposable
 
 @inject IBambuMttqClient BambuMttqClient
 @inject IConfiguration Configuration
 @inject IJSRuntime JS
-@inject NavigationManager Navigator
+@inject NavigationManager Navigation
+@inject ILogger<Home> Logger
 
 <PageTitle>BambuLanViewer</PageTitle>
 
@@ -39,7 +41,6 @@ else if (!BambuMttqClient.IsConnected)
     private string message = "Waiting for printer data...";
 
     private string? baseUrl = null;
-    private string imageUrl = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +53,7 @@ else if (!BambuMttqClient.IsConnected)
 
     private async Task ShowDialog()
     {
-        Navigator.NavigateTo("/previewpage", true);
+        Navigation.NavigateTo("/previewpage", false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -60,12 +61,12 @@ else if (!BambuMttqClient.IsConnected)
         if (firstRender)
         {
             await JS.InvokeVoidAsync("scaleProgress");
-
             while (!BambuMttqClient.IsConnected)
             {
                 try
                 {
                     await BambuMttqClient.ConnectAsync();
+                    Logger.LogInformation("Connected to MttqClient");
                 }
                 catch (Exception ex)
                 {
@@ -78,15 +79,15 @@ else if (!BambuMttqClient.IsConnected)
     }
 
 
-    private void OnMqttConnected(object? sender, MqttClientConnectedEventArgs e)
+    private async void OnMqttConnected(object? sender, MqttClientConnectedEventArgs e)
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void OnMqttDisconnected(object? sender, MqttClientDisconnectedEventArgs e)
+    private async void OnMqttDisconnected(object? sender, MqttClientDisconnectedEventArgs e)
     {
         PrinterData = null;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void OnMessageReceived(object? sender, Services.PrinterDataModel e)
@@ -103,10 +104,23 @@ else if (!BambuMttqClient.IsConnected)
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         BambuMttqClient.Connected -= OnMqttConnected;
         BambuMttqClient.Disconnected -= OnMqttDisconnected;
         BambuMttqClient.MessageReceived -= OnMessageReceived;
+
+        if (BambuMttqClient.IsConnected)
+        {
+            try
+            {
+                await BambuMttqClient.DisconnectAsync();
+                Logger.LogInformation("Disconnected from MttqClient");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error disconnecting MttqClient");
+            }
+        }
     }
 }
